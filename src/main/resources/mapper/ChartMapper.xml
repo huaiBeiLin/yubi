@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yupi.springbootinit.mapper.ChartMapper">
+
+    <resultMap id="BaseResultMap" type="com.yupi.springbootinit.model.entity.Chart">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="goal" column="goal" jdbcType="VARCHAR"/>
+            <result property="chartData" column="chartData" jdbcType="VARCHAR"/>
+            <result property="chartType" column="chartType" jdbcType="VARCHAR"/>
+            <result property="genChart" column="genChart" jdbcType="VARCHAR"/>
+            <result property="genResult" column="genResult" jdbcType="VARCHAR"/>
+            <result property="userRole" column="userRole" jdbcType="VARCHAR"/>
+            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+            <result property="userId" column="userId" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="OTHER"/>
+            <result property="execMessage" column="execMessage" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,goal,chartData,
+        chartType,genChart,genResult,
+        userRole,createTime,updateTime,
+        isDelete,userId,name,
+        status,execMessage
+    </sql>
+    <insert id="insertAll">
+        insert into chart_#{chartId} (dataType1, dataType2) values(#{data1}, #{data2});
+    </insert>
+    <update id="updateGenChart">
+        create table chart_#{tableId} (
+            dataType1  varchar(50) NOT NULL,
+            dataType2 varchar(50) NOT NULL
+        );
+    </update>
+    <select id="queryAllByData1" resultType="map">
+        SELECT dataType1, dataType2 from chart_#{chartId} WHERE dataType1 = #{data1};
+    </select>
+
+    <select id="queryAllByData2" resultType="map">
+        SELECT dataType1, dataType2 from chart_#{chartId} WHERE dataType2 = #{data2};
+    </select>
+</mapper>
