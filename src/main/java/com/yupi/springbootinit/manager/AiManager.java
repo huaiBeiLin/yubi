@@ -17,8 +17,7 @@ import javax.annotation.Resource;
  * @version JDK 8
  * @className AiManager (此处以class为例)
  * @date 2024/7/11
- * @description TODO
- */
+ * @description TODO*/
 public class AiManager {
     private static Long modelId = 1811304637730324482L;
 

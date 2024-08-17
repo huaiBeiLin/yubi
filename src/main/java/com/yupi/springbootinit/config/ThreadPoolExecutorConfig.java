@@ -16,8 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @version JDK 8
  * @className ThreadPoolExecutor (此处以class为例)
  * @date 2024/7/18
- * @description TODO
- */
+ * @description TODO*/
 @Configuration
 public class ThreadPoolExecutorConfig {
     @Bean

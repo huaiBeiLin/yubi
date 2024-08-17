@@ -12,8 +12,7 @@ import javax.annotation.Resource;
  * @version JDK 8
  * @className MyMessageProducer (此处以class为例)
  * @date 2024/7/21
- * @description 生产者
- */
+ * @description 生产者*/
 @Component
 public class MyMessageProducer {
     @Resource

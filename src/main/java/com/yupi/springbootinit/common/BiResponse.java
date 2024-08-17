@@ -10,8 +10,7 @@ import org.apache.poi.ss.formula.functions.T;
  * @version JDK 8
  * @className BiResponse (此处以class为例)
  * @date 2024/7/12
- * @description 生成图表响应类
- */
+ * @description 生成图表响应类*/
 @Data
 public class BiResponse {
     private String genChartData;

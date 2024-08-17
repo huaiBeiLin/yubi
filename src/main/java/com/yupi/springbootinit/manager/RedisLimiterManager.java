@@ -22,8 +22,7 @@ import javax.annotation.Resource;
  * @version JDK 8
  * @className RedisLimiterManager (此处以class为例)
  * @date 2024/7/16
- * @description redis限流通用模块
- */
+ * @description redis限流通用模块*/
 @Service
 public class RedisLimiterManager {
 

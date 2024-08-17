@@ -23,8 +23,7 @@ import java.io.IOException;
  * @version JDK 8
  * @className MyMessageConsumer (此处以class为例)
  * @date 2024/7/21
- * @description 消费者
- */
+ * @description 消费者*/
 @Component
 @Slf4j
 public class MyMessageConsumer {

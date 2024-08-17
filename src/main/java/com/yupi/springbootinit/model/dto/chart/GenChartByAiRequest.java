@@ -9,8 +9,7 @@ import lombok.Data;
  * @version JDK 8
  * @className GenChartByAiRequest (此处以class为例)
  * @date 2024/7/12
- * @description 生成图表请求
- */
+ * @description 生成图表请求*/
 @Data
 public class GenChartByAiRequest {
     /**

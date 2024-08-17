@@ -11,8 +11,7 @@ import com.rabbitmq.client.ConnectionFactory;
  * @version JDK 8
  * @className MqInitMain (此处以class为例)
  * @date 2024/7/21
- * @description TODO
- */
+ * @description TODO*/
 public class MqInitMain {
     public static void main(String[] args) {
         try {

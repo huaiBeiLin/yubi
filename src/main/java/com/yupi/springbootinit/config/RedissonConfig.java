@@ -17,8 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @version JDK 8
  * @className RedisLimiterConfig (此处以class为例)
  * @date 2024/7/16
- * @description 配置Redisson
- */
+ * @description 配置Redisson*/
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.redis")

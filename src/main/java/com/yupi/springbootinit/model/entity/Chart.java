@@ -11,8 +11,7 @@ import java.util.Date;
 
 /**
  * 图表信息表
- * @TableName chart
- */
+ * @TableName chart*/
 @TableName(value ="chart")
 @Data
 public class Chart implements Serializable {
