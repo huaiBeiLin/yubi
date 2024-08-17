@@ -21,7 +21,6 @@
 - MySQL 数据库
 - Redis 内存数据库
 - Elasticsearch 搜索引擎
-- 腾讯云 COS 对象存储
 
 ### 工具类
 
@@ -53,8 +52,6 @@
 - 帖子点赞、取消点赞
 - 帖子收藏、取消收藏、检索已收藏帖子
 - 帖子全量同步 ES、增量同步 ES 定时任务
-- 支持微信开放平台登录
-- 支持微信公众号订阅、收发消息、设置菜单
 - 支持分业务的文件上传
 
 ### 单元测试
@@ -167,7 +164,7 @@ PUT post_v1
 
 ```
 // 指定生成参数
-String packageName = "com.yupi.springbootinit";
+String packageName = "com.yuxin.springbootinit";
 String dataName = "用户评论";
 String dataKey = "userComment";
 String upperDataKey = "UserComment";

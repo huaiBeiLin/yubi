@@ -1,0 +1,43 @@
+package com.yuxin.springbootinit.manager;
+
+import com.yuxin.springbootinit.common.ErrorCode;
+import com.yuxin.springbootinit.config.RedissonConfig;
+import com.yuxin.springbootinit.exception.BusinessException;
+import org.redisson.api.RRateLimiter;
+import org.redisson.api.RateIntervalUnit;
+import org.redisson.api.RateType;
+import org.springframework.stereotype.Service;
+
+/**
+ * packageName com.yuxin.springbootinit.manager
+ * @author yuxin
+ * @version JDK 8
+ * @className RedisLimiterManager (此处以class为例)
+ * @date 2024/7/16 * @description redis限流通用模块*/
+@Service
+public class RedisLimiterManager {
+
+//    @Resource
+//    private RedissonClient redissonClient = redissonConfig.redissonClient();
+
+    public void doRateLimiter(String key) {
+        RedissonConfig redissonConfig = new RedissonConfig();
+        RRateLimiter rateLimiter = redissonConfig.redissonClient().getRateLimiter(key);
+        rateLimiter.trySetRate(RateType.OVERALL, 2, 1, RateIntervalUnit.SECONDS);
+
+        boolean canOp = rateLimiter.tryAcquire(1);
+        if (!canOp) {
+            throw  new BusinessException(ErrorCode.TOO_MANY_REQUEST);
+        }
+    }
+
+    public static void main(String[] args) {
+        RedisLimiterManager redisLimiterManager = new RedisLimiterManager();
+        for (int i = 0; i < 5; i++) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("请求1");
+            System.out.println("成功第" + i + "次");
+            redisLimiterManager.doRateLimiter(stringBuilder.toString());
+        }
+    }
+}
