@@ -1,6 +1,10 @@
 package com.yuxin.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
+import com.github.rholder.retry.RetryException;
+import com.github.rholder.retry.Retryer;
+import com.github.rholder.retry.RetryerBuilder;
+import com.github.rholder.retry.StopStrategies;
 import com.yuxin.springbootinit.bizmq.MyMessageProducer;
 import com.yuxin.springbootinit.common.BaseResponse;
 import com.yuxin.springbootinit.common.BiResponse;
@@ -21,7 +25,9 @@ import com.yuxin.springbootinit.service.UserService;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -120,6 +126,15 @@ public class FileController {
         DivideChartUtil divideChartUtil = new DivideChartUtil();
         divideChartUtil.divideChart(chart, data, chartMapper);
 
+        Retryer<String> retryer = RetryerBuilder.<String>newBuilder()
+                // 非正数进行重试
+                .retryIfException()
+                // 结果为null报异常
+//                .retryIfResult(result->result == null)
+                // 设置最大执行次数3次
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3)).build();
+//                .withStopStrategy(StopStrategies.neverStop()).build();
+
         CompletableFuture.runAsync(()->{
             Chart updateChart = new Chart();
             updateChart.setId(chart.getId());
@@ -130,7 +145,20 @@ public class FileController {
                 ErrorHandler(chart, "更新图标运行中状态失败");
             }
 
-            String result = AiManager.doChat(userInput.toString());
+            StringBuilder stringBuilder = new StringBuilder();
+            try {
+                retryer.call(()-> {
+                    stringBuilder.append(AiManager.doChat(userInput.toString()));
+                    return stringBuilder.toString();
+                });
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (RetryException e) {
+                throw new RuntimeException(e);
+            }
+
+            String result = stringBuilder.toString();
+
             String[] splits = result.split("【【【【【");
             if (splits.length < 3) {
                 ErrorHandler(chart, "AI生成失败");

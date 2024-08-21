@@ -19,13 +19,16 @@ public class AiManager {
 
     static String accessKey = "icitmm98m5fr0owiwdfw57rrdrxsxgjy";
     static String secretKey = "wgm6oqrjchbohln0n2kcfybqig8spey8";
+
     static YuCongMingClient client = new YuCongMingClient(accessKey, secretKey);
     public static String doChat(String message) {
         DevChatRequest devChatRequest = new DevChatRequest();
         devChatRequest.setModelId(modelId);
         devChatRequest.setMessage(message);
         BaseResponse<DevChatResponse> response = client.doChat(devChatRequest);
-        if (response == null) {
+        System.out.println(response);
+        if (response.getData() == null) {
+            System.out.println("抛出异常");
             throw new BusinessException(ErrorCode.SYSTEM_ERROR);
         }
         return response.getData().getContent();
