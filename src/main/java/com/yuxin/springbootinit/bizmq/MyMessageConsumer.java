@@ -1,11 +1,16 @@
 package com.yuxin.springbootinit.bizmq;
 
+import com.github.rholder.retry.RetryException;
+import com.github.rholder.retry.Retryer;
+import com.github.rholder.retry.RetryerBuilder;
+import com.github.rholder.retry.StopStrategies;
 import com.rabbitmq.client.Channel;
 import com.yuxin.springbootinit.common.ErrorCode;
 import com.yuxin.springbootinit.exception.BusinessException;
 import com.yuxin.springbootinit.manager.AiManager;
 import com.yuxin.springbootinit.model.entity.Chart;
 import com.yuxin.springbootinit.service.ChartService;
+import com.yuxin.springbootinit.utils.RetryUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,6 +19,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.concurrent.ExecutionException;
 
 /**
  * packageName com.yuxin.springbootinit.bizmq
@@ -45,12 +51,23 @@ public class MyMessageConsumer {
         updateChart.setId(chart.getId());
         updateChart.setChartData(chart.getId().toString());
         updateChart.setStatus("running");
-        boolean save = this.chartService.updateById(updateChart);
+
+
+        Boolean save = null;
+
+        RetryUtil.retry(save = this.chartService.updateById(updateChart), false);
+
         if (!save) {
             ErrorHandler(chart, "更新图表运行中状态失败");
         }
 
-        String result = AiManager.doChat(userInput.toString());
+
+
+        StringBuilder stringBuilder = new StringBuilder();
+        RetryUtil.retry(stringBuilder.append(AiManager.doChat(userInput.toString())).toString(), null);
+
+        String result = stringBuilder.toString();
+
         String[] splits = result.split("【【【【【");
         if (splits.length < 3) {
             ErrorHandler(chart, "AI生成失败");
@@ -64,7 +81,8 @@ public class MyMessageConsumer {
         updateChartResult.setStatus("succeed");
         updateChartResult.setGenChart(genChartData);
         updateChartResult.setGenResult(genChartResult);
-        save = this.chartService.updateById(updateChartResult);
+
+        RetryUtil.retry(save = this.chartService.updateById(updateChart), false);
         if (!save) {
             ErrorHandler(chart, "更新图表成功状态失败");
         }

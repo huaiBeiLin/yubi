@@ -2,9 +2,6 @@ package com.yuxin.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.github.rholder.retry.RetryException;
-import com.github.rholder.retry.Retryer;
-import com.github.rholder.retry.RetryerBuilder;
-import com.github.rholder.retry.StopStrategies;
 import com.yuxin.springbootinit.bizmq.MyMessageProducer;
 import com.yuxin.springbootinit.common.BaseResponse;
 import com.yuxin.springbootinit.common.BiResponse;
@@ -27,12 +24,12 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import com.yuxin.springbootinit.utils.DivideChartUtil;
+import com.yuxin.springbootinit.utils.DivideChartUtils;
 import com.yuxin.springbootinit.utils.ExcelUtils;
+import com.yuxin.springbootinit.utils.RetryUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -123,39 +120,23 @@ public class FileController {
         boolean saveResult = this.chartService.save(chart);
         ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR);
 
-        DivideChartUtil divideChartUtil = new DivideChartUtil();
-        divideChartUtil.divideChart(chart, data, chartMapper);
-
-        Retryer<String> retryer = RetryerBuilder.<String>newBuilder()
-                // 非正数进行重试
-                .retryIfException()
-                // 结果为null报异常
-//                .retryIfResult(result->result == null)
-                // 设置最大执行次数3次
-                .withStopStrategy(StopStrategies.stopAfterAttempt(3)).build();
-//                .withStopStrategy(StopStrategies.neverStop()).build();
+        DivideChartUtils divideChartUtils = new DivideChartUtils();
+        divideChartUtils.divideChart(chart, data, chartMapper);
 
         CompletableFuture.runAsync(()->{
             Chart updateChart = new Chart();
             updateChart.setId(chart.getId());
             updateChart.setChartData(chart.getId().toString());
             updateChart.setStatus("running");
-            boolean save = this.chartService.updateById(updateChart);
+            Boolean save = null;
+
+            RetryUtil.retry(save = this.chartService.updateById(updateChart), false);
             if (!save) {
-                ErrorHandler(chart, "更新图标运行中状态失败");
+                ErrorHandler(chart, "更新图表运行中状态失败");
             }
 
             StringBuilder stringBuilder = new StringBuilder();
-            try {
-                retryer.call(()-> {
-                    stringBuilder.append(AiManager.doChat(userInput.toString()));
-                    return stringBuilder.toString();
-                });
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (RetryException e) {
-                throw new RuntimeException(e);
-            }
+            RetryUtil.retry(stringBuilder.append(AiManager.doChat(userInput.toString())).toString(), null);
 
             String result = stringBuilder.toString();
 
@@ -172,7 +153,8 @@ public class FileController {
             updateChartResult.setStatus("succeed");
             updateChartResult.setGenChart(genChartData);
             updateChartResult.setGenResult(genChartResult);
-            save = this.chartService.updateById(updateChartResult);
+
+            RetryUtil.retry(save = this.chartService.updateById(updateChart), false);
             if (!save) {
                 ErrorHandler(chart, "更新图表成功状态失败");
             }
@@ -234,9 +216,9 @@ public class FileController {
         boolean saveResult = this.chartService.save(chart);
         ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR);
 
-        DivideChartUtil divideChartUtil = new DivideChartUtil();
-        divideChartUtil.divideChart(chart, data, chartMapper);
-        divideChartUtil.queryData(chart,"1", "1", chartMapper);
+        DivideChartUtils divideChartUtils = new DivideChartUtils();
+        divideChartUtils.divideChart(chart, data, chartMapper);
+        divideChartUtils.queryData(chart,"1", "1", chartMapper);
 
         StringBuilder message = new StringBuilder();
         message.append(StringUtils.join(chart.getId(), "/")).append(data);

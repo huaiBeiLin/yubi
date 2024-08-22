@@ -15,7 +15,7 @@ import java.util.Map;
  * @version JDK 8
  * @className DivideChartUtil (此处以class为例)
  * @date 2024/7/20 * @description 分表工具类*/
-public class DivideChartUtil {
+public class DivideChartUtils {
     public void divideChart(Chart chart, @NotNull String data, ChartMapper chartMapper) {
         String[] lines = data.split("\n");
         chartMapper.updateGenChart(chart.getId());
