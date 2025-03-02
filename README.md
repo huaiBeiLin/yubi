@@ -114,7 +114,7 @@ spring:
 修改前：
 
 ```java
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+@SpringBootApplication(exclude = {RedisAutoConfiguration.class});
 ```
 
 修改后：
