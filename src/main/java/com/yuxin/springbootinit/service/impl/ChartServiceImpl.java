@@ -8,8 +8,6 @@ import com.yuxin.springbootinit.common.ErrorCode;
 import com.yuxin.springbootinit.exception.BusinessException;
 import com.yuxin.springbootinit.exception.ThrowUtils;
 import com.yuxin.springbootinit.mapper.ChartMapper;
-import com.yuxin.springbootinit.mapper.PostFavourMapper;
-import com.yuxin.springbootinit.mapper.PostThumbMapper;
 import com.yuxin.springbootinit.model.dto.chart.ChartQueryRequest;
 import com.yuxin.springbootinit.model.entity.*;
 import com.yuxin.springbootinit.model.entity.Chart;
@@ -44,12 +42,6 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart> implements
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private PostThumbMapper ChartThumbMapper;
-
-    @Resource
-    private PostFavourMapper ChartFavourMapper;
 
     @Resource
     private ElasticsearchRestTemplate elasticsearchRestTemplate;

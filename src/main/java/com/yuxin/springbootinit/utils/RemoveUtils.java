@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  */
 public class RemoveUtils {
         public static void main(String[] args) {
-            String text = "这里是文本内容，可能包含由AI生成的[多余内容]。";
+            String text = "这里是文本内容，可能包含由AI生成的[多余内容]和[无关内容]。";
 
             // 定义正则表达式来匹配AI生成的标记
             String patternString = "\\[.*?\\]"; // 匹配括号内的内容

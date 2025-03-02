@@ -32,10 +32,10 @@ spring:
     password: 123456
 
   rabbitmq:
-    host: localhost
+    host: 101.37.17.235
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: 2d73b017
   # Elasticsearch 配置
   # todo 需替换配置，然后取消注释
 #  elasticsearch:
